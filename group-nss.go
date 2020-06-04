@@ -1,5 +1,7 @@
 package nss
 
+//#include <grp.h>
+
 import "C"
 
 import (
