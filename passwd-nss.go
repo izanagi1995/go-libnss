@@ -1,13 +1,15 @@
 package nss
+
 //#include <pwd.h>
 //#include <errno.h>
 import "C"
 
-import(
-	. "github.com/protosam/go-libnss/structs"
+import (
 	"bytes"
 	"syscall"
 	"unsafe"
+
+	. "github.com/izanagi1995/go-libnss/structs"
 )
 
 var entries_passwd = make([]Passwd, 0)
@@ -18,14 +20,14 @@ func go_setpwent() Status {
 	var status Status
 	status, entries_passwd = implemented.PasswdAll()
 	entry_index_passwd = 0
-	return status;
+	return status
 }
 
 //export go_endpwent
 func go_endpwent() Status {
 	entries_passwd = make([]Passwd, 0)
 	entry_index_passwd = 0
-	return StatusSuccess;
+	return StatusSuccess
 }
 
 //export go_getpwent
@@ -35,7 +37,7 @@ func go_getpwent(passwd *C.struct_passwd, buf *C.char, buflen C.size_t, errnop *
 	}
 	setCPasswd(&entries_passwd[entry_index_passwd], passwd, buf, buflen, errnop)
 	entry_index_passwd++
-	return StatusSuccess;
+	return StatusSuccess
 }
 
 //export go_getpwnam
@@ -45,7 +47,7 @@ func go_getpwnam(name string, passwd *C.struct_passwd, buf *C.char, buflen C.siz
 		return status
 	}
 	setCPasswd(&pwd, passwd, buf, buflen, errnop)
-	return StatusSuccess;
+	return StatusSuccess
 }
 
 //export go_getpwuid
@@ -55,7 +57,7 @@ func go_getpwuid(uid uint, passwd *C.struct_passwd, buf *C.char, buflen C.size_t
 		return status
 	}
 	setCPasswd(&pwd, passwd, buf, buflen, errnop)
-	return StatusSuccess;
+	return StatusSuccess
 }
 
 // Sets the C values for libnss

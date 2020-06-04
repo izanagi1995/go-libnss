@@ -7,7 +7,7 @@ Right now we only have binding for `passwd`, `group`, and `shadow`. This may cha
 ## How do I use it?
 First you should `go get` the package:
 ```
-go get github.com/protosam/go-libnss
+go get github.com/izanagi1995/go-libnss
 ```
 Take a gander at the `example` directory. It includes information on how to compile the example and you can use the implementation as a boiler plate for your own project.
 
@@ -15,4 +15,4 @@ Take a gander at the `example` directory. It includes information on how to comp
 MIT License
 
 # Projects Using Go-Libnss
-[Go-Libnss-Etcd](https://github.com/protosam/go-libnss-etcd) - An NSS package that stores passwd, group, and shadow data in etcd. It also comes with CLI tools for managing users and groups stored in etcd.
+[Go-Libnss-Etcd](https://github.com/izanagi1995/go-libnss-etcd) - An NSS package that stores passwd, group, and shadow data in etcd. It also comes with CLI tools for managing users and groups stored in etcd.

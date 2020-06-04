@@ -1,21 +1,20 @@
 package main
 
 import (
-	. "github.com/protosam/go-libnss"
-	. "github.com/protosam/go-libnss/structs"
+	. "github.com/izanagi1995/go-libnss"
+	. "github.com/izanagi1995/go-libnss/structs"
 )
-
 
 // Placeholder main() stub is neccessary for compile.
 func main() {}
 
-func init(){
+func init() {
 	// We set our implementation to "TestImpl", so that go-libnss will use the methods we create
 	SetImpl(TestImpl{})
 }
 
 // We're creating a struct that implements LIBNSS stub methods.
-type TestImpl struct { LIBNSS }
+type TestImpl struct{ LIBNSS }
 
 ////////////////////////////////////////////////////////////////
 // Passwd Methods
@@ -48,7 +47,6 @@ func (self TestImpl) PasswdByUid(uid uint) (Status, Passwd) {
 	}
 	return StatusNotfound, Passwd{}
 }
-
 
 ////////////////////////////////////////////////////////////////
 // Group Methods

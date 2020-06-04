@@ -1,4 +1,5 @@
 package nss
+
 //#include <grp.h>
 //#include <errno.h>
 //#include <stdlib.h>
@@ -20,13 +21,13 @@ static void freeCharArray(char **a, int size) {
 */
 import "C"
 
-import(
-	. "github.com/protosam/go-libnss/structs"
+import (
 	"bytes"
 	"syscall"
 	"unsafe"
-)
 
+	. "github.com/izanagi1995/go-libnss/structs"
+)
 
 var entries_group = make([]Group, 0)
 var entry_index_group int
@@ -36,14 +37,14 @@ func go_setgrent(stayopen C.int) Status {
 	var status Status
 	status, entries_group = implemented.GroupAll()
 	entry_index_group = 0
-	return status;
+	return status
 }
 
 //export go_endgrent
 func go_endgrent() Status {
 	entries_group = make([]Group, 0)
 	entry_index_group = 0
-	return StatusSuccess;
+	return StatusSuccess
 }
 
 //export go_getgrent_r
@@ -51,9 +52,9 @@ func go_getgrent_r(grp *C.struct_group, buf *C.char, buflen C.size_t, errnop *C.
 	if entry_index_group == len(entries_group) {
 		return StatusNotfound
 	}
-	setCGroup(&entries_group[entry_index_group], grp , buf, buflen, errnop)
+	setCGroup(&entries_group[entry_index_group], grp, buf, buflen, errnop)
 	entry_index_group++
-	return StatusSuccess;
+	return StatusSuccess
 }
 
 //export go_getgrnam_r
@@ -62,8 +63,8 @@ func go_getgrnam_r(name string, grp *C.struct_group, buf *C.char, buflen C.size_
 	if status != StatusSuccess {
 		return status
 	}
-	setCGroup(&group, grp , buf, buflen, errnop)
-	return StatusSuccess;
+	setCGroup(&group, grp, buf, buflen, errnop)
+	return StatusSuccess
 }
 
 //export go_getgrgid_r
@@ -72,8 +73,8 @@ func go_getgrgid_r(gid uint, grp *C.struct_group, buf *C.char, buflen C.size_t, 
 	if status != StatusSuccess {
 		return status
 	}
-	setCGroup(&group, grp , buf, buflen, errnop)
-	return StatusSuccess;
+	setCGroup(&group, grp, buf, buflen, errnop)
+	return StatusSuccess
 }
 
 // Sets the C values for libnss
@@ -97,18 +98,24 @@ func setCGroup(p *Group, grp *C.struct_group, buf *C.char, buflen C.size_t, errn
 	b.WriteByte(0)
 
 	grp.gr_gid = C.uint(p.GID)
-	
-	// ################ MAKING **C.char in GO! 
+
+	// ################ MAKING **C.char in GO!
 	// Making a list of the members...
 	// NOTE: There has to be a better way to do this.
 	// I'm also making an assumption the process running this dies, freeing up the memory.
 
-	grp.gr_mem = C.makeCharArray(C.int(len(p.Members)))
-	//defer C.freeCharArray(grp.gr_mem, C.int(len(p.Members)))
-	for i, u := range p.Members {
-		C.setArrayString(grp.gr_mem, C.CString(u), C.int(i))
+	cArray := C.malloc(C.size_t(len(p.Members)+1) * C.size_t(unsafe.Sizeof(uintptr(0))))
+
+	// convert the C array to a Go Array so we can index it
+	a := (*[1<<30 - 1]*C.char)(cArray)
+
+	for idx, u := range p.Members {
+		a[idx] = C.CString(u)
 	}
-	// ################ DONE MAKING **C.char in GO! 
+
+	grp.gr_mem = (**C.char)(cArray)
+
+	// ################ DONE MAKING **C.char in GO!
 
 	return StatusSuccess
 }

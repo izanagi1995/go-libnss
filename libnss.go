@@ -1,8 +1,12 @@
 package nss
+
 // #include <nss.h>
 import "C"
-import "errors"
-import . "github.com/protosam/go-libnss/structs"
+import (
+	"errors"
+
+	. "github.com/izanagi1995/go-libnss/structs"
+)
 
 const (
 	StatusTryagain = C.NSS_STATUS_TRYAGAIN
@@ -15,8 +19,7 @@ type Status int32
 
 var ErrNotFound error = errors.New("not found")
 
-
-type Implementation interface{
+type Implementation interface {
 	//PasswdOpen() (Status)
 	//PasswdClose() (Status)
 	PasswdAll() (Status, []Passwd)
@@ -28,7 +31,7 @@ type Implementation interface{
 	GroupAll() (Status, []Group)
 	GroupByName(name string) (Status, Group)
 	GroupByGid(gid uint) (Status, Group)
-	
+
 	//ShadowOpen() (Status)
 	//ShadowClose() (Status)
 	ShadowAll() (Status, []Shadow)
@@ -36,7 +39,7 @@ type Implementation interface{
 }
 
 // Prototype structure for people to embed
-type LIBNSS struct {}
+type LIBNSS struct{}
 
 // setpwent
 /*func (self LIBNSS) PasswdOpen() (Status) {
@@ -75,7 +78,7 @@ func (self LIBNSS) GroupClose() (Status) {
 
 // endgrent
 func (self LIBNSS) GroupAll() (Status, []Group) {
-	return StatusUnavail, []Group{ }
+	return StatusUnavail, []Group{}
 }
 
 // getgrent
@@ -114,6 +117,3 @@ var implemented Implementation
 func SetImpl(i Implementation) {
 	implemented = i
 }
-
-
-
