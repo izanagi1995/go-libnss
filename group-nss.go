@@ -1,7 +1,11 @@
 package nss
 
 //#include <grp.h>
+//#include <errno.h>
+//#include <stdlib.h>
+/*
 
+ */
 import "C"
 
 import (
