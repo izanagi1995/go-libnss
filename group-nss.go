@@ -91,7 +91,7 @@ func setCGroup(p *Group, grp *C.struct_group, buf *C.char, buflen C.size_t, errn
 	// NOTE: There has to be a better way to do this.
 	// I'm also making an assumption the process running this dies, freeing up the memory.
 
-	cArray := C.malloc(C.size_t(len(p.Members)) * C.size_t(unsafe.Sizeof(uintptr(0))))
+	cArray := C.malloc(C.size_t(len(p.Members) + 1) * C.size_t(unsafe.Sizeof(uintptr(0))))
 
 	// convert the C array to a Go Array so we can index it
 	a := (*[1<<30 - 1]*C.char)(cArray)
@@ -99,6 +99,8 @@ func setCGroup(p *Group, grp *C.struct_group, buf *C.char, buflen C.size_t, errn
 	for idx, u := range p.Members {
 		a[idx] = C.CString(u)
 	}
+
+        a[len(p.Members)] = nil
 
 	grp.gr_mem = (**C.char)(cArray)
 
